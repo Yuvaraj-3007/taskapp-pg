@@ -1,0 +1,40 @@
+# ============================================
+# Docker Compose - Task Manager (PostgreSQL)
+# Author: Yuvaraj Pandian
+# This runs: Node.js App + PostgreSQL Database
+# ============================================
+
+services:
+  # --- Node.js Application ---
+  app:
+    build: .
+    ports:
+      - "4001:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - app-network
+
+  # --- PostgreSQL Database ---
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: yuvaraj
+      POSTGRES_PASSWORD: devops123
+      POSTGRES_DB: taskdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - app-network
+
+# --- Named Volumes (data survives restarts) ---
+volumes:
+  pgdata:
+
+# --- Network (app and db talk internally) ---
+networks:
+  app-network:
