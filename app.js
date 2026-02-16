@@ -11,13 +11,14 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json());
 
-// Database connection - "db" is the Docker container name
+// Database connection - reads from environment variables (for Coolify)
+// Falls back to Docker Compose service name "db" for local development
 const pool = new Pool({
-  host: "db",
-  port: 5432,
-  user: "yuvaraj",
-  password: "devops123",
-  database: "taskdb",
+  host: process.env.DB_HOST || "db",
+  port: process.env.DB_PORT || 5432,
+  user: process.env.DB_USER || "yuvaraj",
+  password: process.env.DB_PASSWORD || "devops123",
+  database: process.env.DB_NAME || "taskdb",
 });
 
 // Create table on startup
