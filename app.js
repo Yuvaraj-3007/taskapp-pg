@@ -23,17 +23,25 @@ const pool = new Pool({
 
 // Create table on startup
 async function init() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS tasks (
-      id SERIAL PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
-      done BOOLEAN DEFAULT false,
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `);
-  console.log("Database table ready!");
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS tasks (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        done BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+    console.log("Database table ready!");
+  } catch (err) {
+    console.error("Database init error:", err.message);
+  }
 }
-init();
+
+// Only run init in non-test mode (tests handle their own setup in beforeAll)
+if (process.env.NODE_ENV !== "test") {
+  init();
+}
 
 // GET / - App info
 app.get("/", (req, res) => {
