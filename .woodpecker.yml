@@ -1,0 +1,33 @@
+steps:
+  - name: test
+    image: node:20-alpine
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: yuvaraj
+      DB_PASSWORD: devops123
+      DB_NAME: taskdb
+      NODE_ENV: test
+    commands:
+      - npm install
+      - npm test
+
+  - name: build-and-push
+    image: plugins/docker
+    settings:
+      repo: yuvaraj3007/taskapp-pg
+      tags: latest
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+    when:
+      branch: main
+
+services:
+  - name: postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: yuvaraj
+      POSTGRES_PASSWORD: devops123
+      POSTGRES_DB: taskdb
