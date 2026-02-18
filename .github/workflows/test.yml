@@ -1,0 +1,65 @@
+# ============================================
+# GitHub Actions CI/CD Pipeline
+# Purpose: Automatically test code on every push
+# Author: Yuvaraj Pandian
+# ============================================
+
+name: Test Pipeline
+
+# WHEN to run this pipeline
+on:
+  push:
+    branches: [main]       # Run on every push to main branch
+  pull_request:
+    branches: [main]       # Run on every PR to main branch
+
+# WHAT to run
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest  # GitHub gives a fresh Ubuntu server for FREE
+
+    # We need PostgreSQL for our tests
+    services:
+      db:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: yuvaraj
+          POSTGRES_PASSWORD: devops123
+          POSTGRES_DB: taskdb
+        ports:
+          - 5432:5432
+        # Wait for PostgreSQL to be ready before running tests
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Environment variables for our app to connect to test database
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: yuvaraj
+      DB_PASSWORD: devops123
+      DB_NAME: taskdb
+      NODE_ENV: test
+
+    steps:
+      # Step 1: Download our code from GitHub
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test

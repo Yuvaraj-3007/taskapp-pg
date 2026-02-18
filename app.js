@@ -93,10 +93,15 @@ app.delete("/tasks/:id", async (req, res) => {
   res.json({ message: "Task deleted", task: result.rows[0] });
 });
 
-// Start server
+// Start server (only if not in test mode)
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Task Manager API running on port ${PORT}`);
-  console.log(`Database: PostgreSQL`);
-  console.log(`Author: Yuvaraj Pandian`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Task Manager API running on port ${PORT}`);
+    console.log(`Database: PostgreSQL`);
+    console.log(`Author: Yuvaraj Pandian`);
+  });
+}
+
+// Export for testing
+module.exports = { app, pool };
