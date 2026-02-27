@@ -14,19 +14,6 @@ steps:
     when:
       - event: push
 
-  - name: build-and-push
-    image: plugins/docker
-    settings:
-      repo: yuvaraj3007/taskapp-pg
-      tags: latest
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-    when:
-      - event: push
-        branch: main
-
 services:
   - name: postgres
     image: postgres:16-alpine
