@@ -12,7 +12,7 @@ steps:
       - npm install
       - npm test
     when:
-      event: push
+      - event: push
 
   - name: build-and-push
     image: plugins/docker
@@ -24,8 +24,8 @@ steps:
       password:
         from_secret: docker_password
     when:
-      event: push
-      branch: main
+      - event: push
+        branch: main
 
 services:
   - name: postgres
